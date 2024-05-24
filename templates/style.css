@@ -1,0 +1,77 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+p {
+  text-align: center;
+  color: #666;
+}
+
+.btn {
+  display: block;
+  margin: 0 auto;
+  padding: 15px 30px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 50px; /* Make it round */
+  font-size: 20px; /* Make it bigger */
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .btn {
+    padding: 20px 40px; /* Increase padding for mobile devices */
+    font-size: 24px; /* Increase font size for mobile devices */
+  }
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+ /* Add a black background color to the top navigation */
+ .topnav {
+  background-color: #555;
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+/* Add an active class to highlight the current page */
+.topnav a.active {
+  background-color:  #0056b3;
+  color: white;
+}
+
+/* Hide the link that should open and close the topnav on small screens */
+.topnav .icon {
+  display: none;
+}
+
+.topnav #user {
+  float: right;
+}

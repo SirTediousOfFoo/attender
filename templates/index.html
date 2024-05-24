@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ars attendance</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  </head>
+  <body>
+    <div class="topnav" id="myTopnav">
+      <a href="#home" class="active">Attend</a>
+      <a href="#stats">Stats</a>
+      <a href="#about">About</a>
+      <a id="user" href="#user"><i class='bx bxs-user'></i></a>
+    </div>
+    <h1>Ars Gladiatoria training attendance tracker</h1>
+    <p>Did you train today? Hit the button!</p>
+    <form hx-post="/attendee" hx-target="this" hx-swap="outerHTML">
+      <button class="btn">I was here!</button>
+    </form>
+  </body>
+</html>
