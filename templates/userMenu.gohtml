@@ -1,0 +1,6 @@
+{{ if .Authenticated }}
+  <a href="/login">{{ .FullName }}</a>
+  <a href="/logout">Logout</a>
+{{ else }}
+  <a href="/login">Log In</a>
+{{ end }}

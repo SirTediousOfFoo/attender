@@ -18,15 +18,21 @@
       <div class="dropdown">
         <a class="dropbtn" id="user" href="#user"><i class="bx bxs-user dropdown"></i></a>
         <div class="dropdown-content">
-          <a href="#">Link 1</a>
-          <a href="#">Link 2</a>
+          {{ template "userMenu.gohtml" . }}
         </div>
       </div>
     </div>
     <h1>Ars Gladiatoria training attendance tracker</h1>
+    {{ if .Authenticated }}
     <p>Did you train today? Hit the button!</p>
     <form hx-post="/attendee" hx-target="this" hx-swap="outerHTML">
       <button class="btn">I was here!</button>
     </form>
+    {{ else }}
+    <p>Log in to track your attendance!</p>
+    <form action="/login" >
+    <button class="btn">Log in</button>
+    </form>
+    {{ end }}
   </body>
 </html>
