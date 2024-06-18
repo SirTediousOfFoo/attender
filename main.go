@@ -1,84 +1,57 @@
 package main
 
-
 import (
-
+	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
-	"html/template"
+
+	_ "github.com/lib/pq"
+
+	"sirtediousoffoo/attender/structs"
 )
 
-type User struct {
-	FullName     string
-	Password     string
-	UserID       int
-	Authenticated bool
-	Email        string
-}
+var db *sql.DB
 
 func main() {
-	// Create a new user
-	user := User{
-		FullName: "John Doe",
-		Password: "password",
-		UserID:   1,
-		Email:    "john@doe.net",
-		Authenticated: false,
+	var err error
+	// Read the config file
+	cfg, err := structs.GetConfig("config.yaml")
+
+	// Connect to a postgres database
+	var sqlInfo = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", cfg.Database.Host, cfg.Database.Port, cfg.Database.User, cfg.Database.Password, cfg.Database.Name)
+
+	db, err = sql.Open("postgres", sqlInfo)
+	if err != nil {
+		panic(err)
 	}
-	// Create a custom file server
+
+	defer db.Close()
+
+	// Check if the connection is working
+	err = db.Ping()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	// Get a user from the database
+	user1, err := authenticateUser(db, "pero", "123456")
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Print(user1)
+
 	fileServer := http.FileServer(http.Dir("templates/"))
+
+	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/style.css", styleHandler(fileServer))
+	http.HandleFunc("/login", loginPageHandler)
+	http.HandleFunc("/logmein", loginHandler)
+	http.HandleFunc("/logout", logoutHandler)
+	// Create a custom file server
 	// Serve up the index page
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// Check if the user has a session cookie
-		sessionCookie, err := r.Cookie("sessionId")
-		if err != nil || sessionCookie.Value == "" {
-			user.Authenticated = false
-		} else {
-			if sessionCookie.Value == "123" {
-				user.Authenticated = true
-			} else {
-				user.Authenticated = false
-			}
-		}
-		// Render the index.gohtml template
-		tmpl, err := template.ParseFiles("templates/index.gohtml", "templates/userMenu.gohtml")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		err = tmpl.Execute(w, user)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	})
-	// Set the correct MIME type for CSS files
-	http.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/css")
-		fileServer.ServeHTTP(w, r)
-	})
 
-	//set cookie with session id when accessing /login
-	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		cookie := &http.Cookie{
-			Name:  "sessionId",
-			Value: "123",
-		}
-		http.SetCookie(w, cookie)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	})
-
-	//remove cookie when accessing /logout
-	http.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
-		cookie := &http.Cookie{
-			Name:   "sessionId",
-			Value:  "",
-			MaxAge: -1,
-		}
-		http.SetCookie(w, cookie)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	})
-	
 	fmt.Println("Server started on http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
 }
+

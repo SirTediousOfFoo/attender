@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ars attendance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="topnav" id="myTopnav">
+      <a href="#home">Attend</a>
+      <a href="#stats">Stats</a>
+      <a href="#about">About</a>
+      <div class="dropdown">
+        <a class="dropbtn" id="user" href="#user"><i class="bx bxs-user dropdown"></i></a>
+        <div class="dropdown-content">
+          {{ template "userMenu.gohtml" . }}
+        </div>
+      </div>
+    </div>
+    <h1>Log in or sign up</h1>
+    {{ if .Authenticated }}
+    <p>You're already logged in silly, get outta here</p>
+    {{ else }}
+    <p>Log in to track your attendance!</p>
+    <form action="/logmein" >
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required />
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required />
+    <button class="btn">Log in</button>
+    </form>
+    {{ end }}
+  </body>
+</html>
