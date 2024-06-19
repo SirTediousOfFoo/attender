@@ -12,7 +12,7 @@
   </head>
   <body>
     <div class="topnav" id="myTopnav">
-      <a href="#home">Attend</a>
+      <a href="/">Attend</a>
       <a href="#stats">Stats</a>
       <a href="#about">About</a>
       <div class="dropdown">
@@ -23,17 +23,35 @@
       </div>
     </div>
     <h1>Log in or sign up</h1>
-    {{ if .Authenticated }}
-    <p>You're already logged in silly, get outta here</p>
-    {{ else }}
     <p>Log in to track your attendance!</p>
-    <form action="/logmein" >
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required />
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required />
-    <button class="btn">Log in</button>
-    </form>
-    {{ end }}
+    <div class="loginbox">
+      <input type="checkbox" id="chk" aria-hidden="true">
+
+        <div class="login">
+          <form action="/logmein">
+            <label class="loginlabel" for="chk" aria-hidden="true">Login</label>
+            <input type="txt" name="username" placeholder="Username" required="true">
+            <input type="password" name="password" placeholder="Password" required="true">
+            <button>Login</button>
+          </form>
+        </div>
+
+        <div class="signup">
+          <form hx-post="/signmeup">
+            <label class="signuplabel" for="chk" aria-hidden="true">Sign up</label>
+            <input type="text" name="username" placeholder="Username" required="true">
+            <input type="email" name="email" placeholder="Email" required="true">
+            <input type="text" name="name" placeholder="Name" required="true">
+            <input type="text" name="surname" placeholder="Last Name" required="true">
+            <input type="password" name="password" placeholder="Password" required="true">
+            <label id="gdprlabel"for="gdprcheck">
+            <input id="gdprcheck" type="checkbox" name="gdpr" required="true" required title="Yeah, you have to agree to this before you can come in, it's a stupid regulation but we have to do it"><span>I agree to the <a href="/termsandconditions">terms and conditions</a></span>
+            </label>
+            <button>Sign up</button>
+          </form>
+        </div>
+    </div>
+
+
   </body>
 </html>
