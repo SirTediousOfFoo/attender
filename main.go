@@ -37,16 +37,20 @@ func main() {
 
 	fileServer := http.FileServer(http.Dir("templates/"))
 
-	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/style.css", styleHandler(fileServer))
+	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "templates/aglogo.jpg")
+	})
 	http.HandleFunc("/login", loginPageHandler)
 	http.HandleFunc("/logmein", loginHandler)
 	http.HandleFunc("/logout", logoutHandler)
 	http.HandleFunc("/termsandconditions", termsAndConditionsHandler)
 	http.HandleFunc("/signmeup", signupHandler)
-	// Create a custom file server
-	// Serve up the index page
+	http.HandleFunc("/validate/email", emailValidator)
+	http.HandleFunc("/validate/username", usernameValidator)
+	http.HandleFunc("/{$}", indexHandler)
 
+	// Serve up the index page
 	fmt.Println("Server started on http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
 }

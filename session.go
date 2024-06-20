@@ -21,6 +21,8 @@ func createSessionCookie(db *sql.DB, userID int) *http.Cookie {
 		Name:    "sessionId",
 		Value:   sessionID,
 		Expires: expirydate,
+		SameSite: http.SameSiteStrictMode,
+		Secure:  true,
 	}
 	return cookie
 }
