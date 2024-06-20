@@ -9,24 +9,31 @@
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
+    <script src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.js"></script>
   </head>
   <body>
     <div class="topnav" id="myTopnav">
-      <a href="#home" class="active">Attend</a>
+      <a href="/" class="active">Attend</a>
       <a href="#stats">Stats</a>
       <a href="#about">About</a>
       <div class="dropdown">
         <a class="dropbtn" id="user" href="#user"><i class="bx bxs-user dropdown"></i></a>
         <div class="dropdown-content">
-          <a href="#">Link 1</a>
-          <a href="#">Link 2</a>
+          {{ template "userMenu.gohtml" . }}
         </div>
       </div>
     </div>
     <h1>Ars Gladiatoria training attendance tracker</h1>
+    {{ if .Authenticated }}
     <p>Did you train today? Hit the button!</p>
     <form hx-post="/attendee" hx-target="this" hx-swap="outerHTML">
       <button class="btn">I was here!</button>
     </form>
+    {{ else }}
+    <p>Log in to track your attendance!</p>
+    <form action="/login" >
+    <button class="btn">Log in</button>
+    </form>
+    {{ end }}
   </body>
 </html>
