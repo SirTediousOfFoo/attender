@@ -22,6 +22,16 @@ const usernameGood = `
 <input style="box-shadow: 0 0 3px #36cc00;" type="txt" name="username" hx-post="/validate/username" placeholder="Username" required="true" value={{ . }}>
 `
 
+const loginBad = `
+	<form action="/logmein">
+		<label class="loginlabel" for="chk" aria-hidden="true">Login</label>
+		<input type="txt" name="username" placeholder="Username" required="true" value="{{ . }}">
+		<input type="password" name="password" placeholder="Password" required="true" value="">
+		<label style="position: relative;width: 60%;display: block;margin: auto;height: auto;color: red;" for="password">Username or password incorrect</label>
+		<button style="box-shadow: 0 0 3px #CC0000;" type="submit" hx-post="/logmein" hx-swap="none">Login</button>
+	</form>
+`
+
 func emailValidator(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		// Check if the username is already in use
