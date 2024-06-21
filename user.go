@@ -66,10 +66,13 @@ func checkAuthenticated(db *sql.DB, r *http.Request) (int, error) {
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method == http.MethodPost {
 		user, err := authenticateUser(db, r.FormValue("username"), r.FormValue("password"))
+		log.Println(user, err)
 		if err != nil {
-			//TODO rediredct to error page
+			t := template.Must(template.New("status").Parse(loginBad))
+			t.Execute(w, r.FormValue("username"))
+			return
 		}
 
 		if user.Authenticated {
@@ -83,7 +86,11 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			http.SetCookie(w, cookie)
 		}
+		w.Header().Add("HX-Location", "/")
+		w.Header().Add("HX-Refresh", "true")
+		w.Header().Add("hx-push-url", "/")
 		http.Redirect(w, r, "/", http.StatusOK)
+		return
 	}
 }
 
