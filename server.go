@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+
 	"time"
 )
 
@@ -105,6 +106,7 @@ func attendHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
+
 	// Check if the user has a session cookie
 	userID, err := checkAuthenticated(db, r)
 	if err != nil {
