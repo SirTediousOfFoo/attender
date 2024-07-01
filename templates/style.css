@@ -61,9 +61,10 @@ p {
 }
 
 /* Change the color of links on hover */
-.topnav a:hover {
+.topnav a:hover, a:active{
   background-color: #ddd;
   color: black;
+  cursor: pointer;
 }
 
 /* Add an active class to highlight the current page */
@@ -114,10 +115,9 @@ p {
 }
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {
+.dropdown-content a:hover{
   background-color: #f1f1f1;
   float: none;
-
 }
 
 /* Show the dropdown menu on hover */

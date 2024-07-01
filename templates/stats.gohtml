@@ -1,0 +1,44 @@
+<div class="topnav" id="myTopnav" >
+  <a hx-get="/" hx-target="#main-view">Attend</a>
+  <a hx-get="/stats" hx-target="#main-view" class="active">Stats</a>
+  <a hx-get="/about" hx-target="#main-view">About</a>
+  <div class="dropdown">
+    <a class="dropbtn" id="user" href="#user"><i class="bx bxs-user dropdown"></i></a>
+    <div class="dropdown-content">
+      {{ template "userMenu.gohtml" . }}
+    </div>
+  </div>
+</div>
+<h1>Your attendance stats</h1>
+{{- if . -}}
+<table style="margin: 0 auto; table-layout: auto; text-align: left; margin-top: 20px;">
+  <thead>
+    <tr>
+      <th style="padding: 5px;">Total days attended</th>
+      <td style="padding: 5px;">{{ .Stats.AttendedTotal }}</td>
+    </tr>
+    <tr>
+      <th style="padding: 5px;">Attendance for
+        <select name="month" hx-get="/stats" hx-target="#main-view">
+            <option value="1" {{ if eq currMonth "January" }}selected="selected"{{end}}}}>January</option>
+            <option value="2" {{ if eq currMonth "February" }}selected="selected"{{end}}}}>February</option>
+            <option value="3" {{ if eq currMonth "March" }}selected="selected"{{end}}}}>March</option>
+            <option value="4" {{ if eq currMonth "April" }}selected="selected"{{end}}}}>April</option>
+            <option value="5" {{ if eq currMonth "May" }}selected="selected"{{end}}}}>May</option>
+            <option value="6" {{ if eq currMonth "June" }}selected="selected"{{end}}}}>June</option>
+            <option value="7" {{ if eq currMonth "July" }}selected="selected"{{end}}}}>July</option>
+            <option value="8" {{ if eq currMonth "August" }}selected="selected"{{end}}}}>August</option>
+            <option value="9" {{ if eq currMonth "September" }}selected="selected"{{end}}}}>September</option>
+            <option value="10" {{ if eq currMonth "October" }}selected="selected"{{end}}}}>October</option>
+            <option value="11" {{ if eq currMonth "November" }}selected="selected"{{end}}}}>November</option>
+            <option value="12" {{ if eq currMonth "December" }}selected="selected"{{end}}}}>December</option>
+        </select>
+      </th>
+      <td style="padding: 5px;">{{ .Stats.AttendedMonthly }}</td>
+    </tr>
+  </thead>
+</table>
+</table>
+{{ else }}
+  <p>No attendance data yet!</p>
+{{ end }}

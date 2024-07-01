@@ -12,10 +12,11 @@
     <script src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.js"></script>
   </head>
   <body>
+  <div id="main-view">
     <div class="topnav" id="myTopnav">
-      <a href="/" class="active">Attend</a>
-      <a href="#stats">Stats</a>
-      <a href="#about">About</a>
+      <a hx-get="/" hx-target="#main-view" class="active">Attend</a>
+      <a hx-get="/stats" hx-target="#main-view">Stats</a>
+      <a hx-get="/about" hx-target="#main-view">About</a>
       <div class="dropdown">
         <a class="dropbtn" id="user" href="#user"><i class="bx bxs-user dropdown"></i></a>
         <div class="dropdown-content">
@@ -35,5 +36,6 @@
     <button class="btn">Log in</button>
     </form>
     {{ end }}
+    </div>
   </body>
 </html>

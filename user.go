@@ -22,6 +22,13 @@ type User struct {
 	Username      string
 	Email         string
 	Authenticated bool
+	Stats 			 Stats
+}
+
+// Stats holds attendance data for our current user, probably will be nil for most cases except for the stats page
+type Stats struct {
+	AttendedTotal int
+	AttendedMonthly int
 }
 
 func getUserFromDB(db *sql.DB, id int) (User, error) {
@@ -36,6 +43,7 @@ func getUserFromDB(db *sql.DB, id int) (User, error) {
 }
 
 func authenticateUser(db *sql.DB, username, password string) (User, error) {
+	
 	var user User
 	// Hash the password
 	password = password + cfg.PasswordSalt
