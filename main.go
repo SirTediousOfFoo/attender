@@ -50,6 +50,7 @@ func main() {
 	http.HandleFunc("/validate/username", usernameValidator)
 	http.HandleFunc("/{$}", indexHandler)
 	http.HandleFunc("/attend", attendHandler)
+	http.HandleFunc("/stats", statsHandler)
 
 	// Serve up the index page
 	fmt.Println("Server started on http://localhost:8080")

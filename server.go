@@ -2,12 +2,24 @@ package main
 
 import (
 	"html/template"
+	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
+
 	"time"
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		http.Error(
+			w,
+			"That method is not allowed.",
+			http.StatusMethodNotAllowed,
+		)
+		return
+	}
 	// Check if the user has a session cookie
 	userID, err := checkAuthenticated(db, r)
 	if err != nil {
@@ -40,6 +52,15 @@ func styleHandler(fileServer http.Handler) http.HandlerFunc {
 }
 
 func loginPageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		http.Error(
+			w,
+			"That method is not allowed.",
+			http.StatusMethodNotAllowed,
+		)
+		return
+	}
 	// Check if the user has a session cookie
 	id, err := checkAuthenticated(db, r)
 	if err == nil && id != 0 {
@@ -76,6 +97,16 @@ func termsAndConditionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func attendHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		w.Header().Set("Allow", "POST")
+		http.Error(
+			w,
+			"That method is not allowed.",
+			http.StatusMethodNotAllowed,
+		)
+		return
+	}
+
 	// Check if the user has a session cookie
 	userID, err := checkAuthenticated(db, r)
 	if err != nil {
@@ -116,6 +147,73 @@ func attendHandler(w http.ResponseWriter, r *http.Request) {
 	sucessString := []string{"Yay", ":)", "Woo", "Huzzah", "Awesome", "Fantastic", "Yippee", "Alright", "^_^", "Cool", "Cool beans"}
 	err = tmpl.Execute(w, sucessString[rand.Intn(len(sucessString))])
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func statsHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		http.Error(
+			w,
+			"That method is not allowed.",
+			http.StatusMethodNotAllowed,
+		)
+		return
+	}
+	// Check if the user has a session cookie
+	userID, err := checkAuthenticated(db, r)
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	user, err := getUserFromDB(db, userID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	// Render the stats.gohtml template
+	month := time.Now().Month()
+	if r.URL.Query().Get("month") != "" {
+		monthNum, err := strconv.Atoi(r.URL.Query().Get("month"))
+		if err != nil {
+			log.Println("Error converting month to int", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		month = time.Month(monthNum)
+	}
+
+	tmpl, err := template.New("stats.gohtml").Funcs(template.FuncMap{
+		"currMonth": func() string {
+			return month.String()
+		},
+	}).ParseFiles("templates/stats.gohtml", "templates/userMenu.gohtml")
+	if err != nil {
+		log.Println("Error parsing template", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	attendedTotal := db.QueryRow("SELECT COUNT(date) FROM attendance WHERE userid = $1", user.ID)
+	err = attendedTotal.Scan(&user.Stats.AttendedTotal)
+	if err != nil {
+		log.Println("Error scanning database", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	attendedMonthly := db.QueryRow("SELECT COUNT(date) FROM attendance WHERE userid = $1 AND date_part('month', date) = $2", user.ID, month)
+	err = attendedMonthly.Scan(&user.Stats.AttendedMonthly)
+	log.Println(user.Stats.AttendedMonthly)
+	if err != nil {
+		log.Println("Error scanning database", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.Execute(w, user)
+	if err != nil {
+		log.Println("Error executing template", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
