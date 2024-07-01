@@ -25,9 +25,9 @@
     </div>
     <h1>Ars Gladiatoria training attendance tracker</h1>
     {{ if .Authenticated }}
-    <p>Did you train today? Hit the button!</p>
-    <form hx-post="/attendee" hx-target="this" hx-swap="outerHTML">
-      <button class="btn">I was here!</button>
+    <form id="attender">
+      <p>Did you train today? Hit the button!</p>
+      <button hx-post="/attend" hx-target="#attender" hx-swap="outerHTML" class="btn">I was here!</button>
     </form>
     {{ else }}
     <p>Log in to track your attendance!</p>
