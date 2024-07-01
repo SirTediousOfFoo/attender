@@ -49,6 +49,7 @@ func main() {
 	http.HandleFunc("/validate/email", emailValidator)
 	http.HandleFunc("/validate/username", usernameValidator)
 	http.HandleFunc("/{$}", indexHandler)
+	http.HandleFunc("/attend", attendHandler)
 
 	// Serve up the index page
 	fmt.Println("Server started on http://localhost:8080")

@@ -43,6 +43,7 @@ func authenticateUser(db *sql.DB, username, password string) (User, error) {
 	err := db.QueryRow("SELECT id, username FROM users WHERE username = $1 AND password = $2", username, password).Scan(&user.ID, &user.Username)
 
 	if err != nil {
+		log.Println(err,password)
 		return User{Username: username, Authenticated: false}, err
 	}
 
@@ -105,7 +106,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if r.FormValue("name") == "" || r.FormValue("surname") == "" || r.FormValue("username") == "" || r.FormValue("email") == "" || r.FormValue("password") == "" {
+		if r.FormValue("name") == "" || r.FormValue("surname") == "" || r.FormValue("username") == "" || r.FormValue("email") == "" || r.FormValue("password") == "" || r.FormValue("gdpr") != "on" {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -118,14 +119,17 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 		_, err = db.Exec("INSERT INTO users (name, surname, username, email, password) VALUES ($1, $2, $3, $4, $5)", r.FormValue("name"), r.FormValue("surname"), r.FormValue("username"), r.FormValue("email"), password)
 		log.Println(r.FormValue("name"), r.FormValue("surname"), r.FormValue("username"), r.FormValue("email"), password)
 		if err != nil {
+			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		// Authenticate the user so we can log him in right away
-		user, err := authenticateUser(db, r.FormValue("username"), password)
+		user, err := authenticateUser(db, r.FormValue("username"), r.FormValue("password"))
 		if err != nil {
+			log.Println(err)
 			w.WriteHeader(http.StatusUnauthorized)
+			return
 		}
 		// Create a session cookie
 		if user.Authenticated {
@@ -138,6 +142,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 				MaxAge: -1,
 			}
 			http.SetCookie(w, cookie)
+			return
 		}
 		//send an htmx hx-redirect header with the response
 		w.Header().Add("HX-Location", "/")
