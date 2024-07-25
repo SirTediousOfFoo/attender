@@ -18,7 +18,7 @@
       <td style="padding: 5px;">{{ .Stats.AttendedTotal }}</td>
     </tr>
      <tr>
-      <th style="padding: 5px;">Yearly attendance
+      <th style="padding: 5px;">Yearly attendance for
         <select name="year" hx-get="/stats" hx-target="#main-view" hx-include="[name='month']">
           {{ range makeYearSelector }}
             <option value="{{ . }}" {{ if eq . currYear }}selected="selected"{{end}}>{{ . }}</option>
@@ -28,7 +28,7 @@
       <td style="padding: 5px;">{{ .Stats.AttendedYearly }}</td>
     </tr>
     <tr>
-      <th style="padding: 5px;">Attendance for
+      <th style="padding: 5px;">{{ currYear }} attendance for
         <select name="month" hx-get="/stats" hx-target="#main-view" hx-include="[name='year']">
             <option value="1" {{ if eq currMonth "January" }}selected="selected"{{end}}>January</option>
             <option value="2" {{ if eq currMonth "February" }}selected="selected"{{end}}>February</option>
@@ -46,9 +46,13 @@
       </th>
       <td style="padding: 5px;">{{ .Stats.AttendedMonthly }}</td>
     </tr>
+    <tr>
+      <th style="padding: 5px;">{{ currMonth }} {{ currYear }} average (others)</th>
+      <td style="padding: 5px;">{{ youVsOthers }}</td>
+    </tr>
   </thead>
 </table>
-</table>
+{{ youVsOthers}}
 {{ else }}
   <p>No attendance data yet!</p>
 {{ end }}
