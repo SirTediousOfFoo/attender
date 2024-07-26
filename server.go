@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"math/rand"
@@ -185,9 +186,45 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 		month = time.Month(monthNum)
 	}
 
+	year := time.Now().Year()
+	if r.URL.Query().Get("year") != "" {
+		year, err = strconv.Atoi(r.URL.Query().Get("year"))
+		if err != nil {
+			log.Println("Error converting year to int", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	fmt.Println(month, year)
+
 	tmpl, err := template.New("stats.gohtml").Funcs(template.FuncMap{
 		"currMonth": func() string {
 			return month.String()
+		},
+		"makeYearSelector": func() []int {
+			var out []int
+			minYear := 2024
+			db.QueryRow("SELECT date_part('year', MIN(date)) FROM attendance WHERE userid = $1" , user.ID).Scan(&minYear)
+			minYear = minYear - 4
+			for i := minYear; i <= time.Now().Year(); i++ {
+				out = append(out, i)
+			}
+			return out
+		},
+		"currYear": func() int {
+			return year
+		},
+		"youVsOthers": func() int {
+			var out string
+			err := db.QueryRow("SELECT coalesce(DIV(sum(totalForUser), count(totalForUser)), 0) from (SELECT count(date) as totalForUser FROM attendance WHERE date_part('year',date) = $1 AND date_part('month',date) = $2 AND userid != $3 GROUP BY userid) as totalForUser", year, int(month), user.ID).Scan(&out)
+			fmt.Println("average", out, month, int(month))
+			if err != nil {
+				log.Println("Error scanning database", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return 0
+			}
+			outint, _ := strconv.Atoi(out)
+			return outint
 		},
 	}).ParseFiles("templates/stats.gohtml", "templates/userMenu.gohtml")
 	if err != nil {
@@ -195,6 +232,7 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	attendedTotal := db.QueryRow("SELECT COUNT(date) FROM attendance WHERE userid = $1", user.ID)
 	err = attendedTotal.Scan(&user.Stats.AttendedTotal)
 	if err != nil {
@@ -202,7 +240,16 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	attendedMonthly := db.QueryRow("SELECT COUNT(date) FROM attendance WHERE userid = $1 AND date_part('month', date) = $2", user.ID, month)
+
+	attendedYearly := db.QueryRow("SELECT COUNT(date) FROM attendance WHERE userid = $1 AND date_part('year', date) = $2", user.ID, year)
+	err = attendedYearly.Scan(&user.Stats.AttendedYearly)
+	if err != nil {
+		log.Println("Error scanning database", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	attendedMonthly := db.QueryRow("SELECT COUNT(date) FROM attendance WHERE userid = $1 AND date_part('month', date) = $2 and date_part('year', date) = $3", user.ID, month, year)
 	err = attendedMonthly.Scan(&user.Stats.AttendedMonthly)
 	log.Println(user.Stats.AttendedMonthly)
 	if err != nil {

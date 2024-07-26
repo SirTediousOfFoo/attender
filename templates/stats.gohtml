@@ -17,28 +17,42 @@
       <th style="padding: 5px;">Total days attended</th>
       <td style="padding: 5px;">{{ .Stats.AttendedTotal }}</td>
     </tr>
+     <tr>
+      <th style="padding: 5px;">Yearly attendance for
+        <select name="year" hx-get="/stats" hx-target="#main-view" hx-include="[name='month']">
+          {{ range makeYearSelector }}
+            <option value="{{ . }}" {{ if eq . currYear }}selected="selected"{{end}}>{{ . }}</option>
+          {{ end }}
+        </select>
+      </th>
+      <td style="padding: 5px;">{{ .Stats.AttendedYearly }}</td>
+    </tr>
     <tr>
-      <th style="padding: 5px;">Attendance for
-        <select name="month" hx-get="/stats" hx-target="#main-view">
-            <option value="1" {{ if eq currMonth "January" }}selected="selected"{{end}}}}>January</option>
-            <option value="2" {{ if eq currMonth "February" }}selected="selected"{{end}}}}>February</option>
-            <option value="3" {{ if eq currMonth "March" }}selected="selected"{{end}}}}>March</option>
-            <option value="4" {{ if eq currMonth "April" }}selected="selected"{{end}}}}>April</option>
-            <option value="5" {{ if eq currMonth "May" }}selected="selected"{{end}}}}>May</option>
-            <option value="6" {{ if eq currMonth "June" }}selected="selected"{{end}}}}>June</option>
-            <option value="7" {{ if eq currMonth "July" }}selected="selected"{{end}}}}>July</option>
-            <option value="8" {{ if eq currMonth "August" }}selected="selected"{{end}}}}>August</option>
-            <option value="9" {{ if eq currMonth "September" }}selected="selected"{{end}}}}>September</option>
-            <option value="10" {{ if eq currMonth "October" }}selected="selected"{{end}}}}>October</option>
-            <option value="11" {{ if eq currMonth "November" }}selected="selected"{{end}}}}>November</option>
-            <option value="12" {{ if eq currMonth "December" }}selected="selected"{{end}}}}>December</option>
+      <th style="padding: 5px;">{{ currYear }} attendance for
+        <select name="month" hx-get="/stats" hx-target="#main-view" hx-include="[name='year']">
+            <option value="1" {{ if eq currMonth "January" }}selected="selected"{{end}}>January</option>
+            <option value="2" {{ if eq currMonth "February" }}selected="selected"{{end}}>February</option>
+            <option value="3" {{ if eq currMonth "March" }}selected="selected"{{end}}>March</option>
+            <option value="4" {{ if eq currMonth "April" }}selected="selected"{{end}}>April</option>
+            <option value="5" {{ if eq currMonth "May" }}selected="selected"{{end}}>May</option>
+            <option value="6" {{ if eq currMonth "June" }}selected="selected"{{end}}>June</option>
+            <option value="7" {{ if eq currMonth "July" }}selected="selected"{{end}}>July</option>
+            <option value="8" {{ if eq currMonth "August" }}selected="selected"{{end}}>August</option>
+            <option value="9" {{ if eq currMonth "September" }}selected="selected"{{end}}>September</option>
+            <option value="10" {{ if eq currMonth "October" }}selected="selected"{{end}}>October</option>
+            <option value="11" {{ if eq currMonth "November" }}selected="selected"{{end}}>November</option>
+            <option value="12" {{ if eq currMonth "December" }}selected="selected"{{end}}>December</option>
         </select>
       </th>
       <td style="padding: 5px;">{{ .Stats.AttendedMonthly }}</td>
     </tr>
+    <tr>
+      <th style="padding: 5px;">{{ currMonth }} {{ currYear }} average (others)</th>
+      <td style="padding: 5px;">{{ youVsOthers }}</td>
+    </tr>
   </thead>
 </table>
-</table>
+{{ youVsOthers}}
 {{ else }}
   <p>No attendance data yet!</p>
 {{ end }}
