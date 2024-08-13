@@ -23,6 +23,7 @@ type User struct {
 	Email         string
 	Authenticated bool
 	Stats         Stats
+	Admin         bool
 }
 
 // Stats holds attendance data for our current user, probably will be nil for most cases except for the stats page
@@ -34,7 +35,7 @@ type Stats struct {
 
 func getUserFromDB(db *sql.DB, id int) (User, error) {
 	var user User
-	err := db.QueryRow("SELECT id, name, surname, username, email FROM users WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Surname, &user.Username, &user.Email)
+	err := db.QueryRow("SELECT id, name, surname, username, email, admin FROM users WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Surname, &user.Username, &user.Email, &user.Admin)
 	if err != nil {
 		user.Authenticated = false
 		return user, err
