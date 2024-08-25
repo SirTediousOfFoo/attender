@@ -249,3 +249,45 @@ a:active {
 .loginbox #gdprlabel span {
   align-content: center;
 }
+
+
+.calendar {
+  margin: 0 auto;
+  width: 35%;
+  height: 100%;
+  background: #eee;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 5px 10px 25px #000;
+  border-collapse: collapse; /* Add this line to collapse the table borders */
+}
+
+.calendar th {
+  background-color: #0056b3;
+  color: white;
+  text-align: left; /* Fix the typo in text-align property */
+  padding: 10px; /* Add padding to create equal cell spacing */
+}
+
+.calendar td {
+  padding: 10px; /* Add padding to create equal cell spacing */
+  width: 14%;
+  height: 50px;
+}
+
+.calendar tr:nth-child(even) {
+  background-color: #f2f2f2; /* Add a background color to the even rows */
+}
+
+.calendar td:hover {
+  background-color: #ddd; /* Add a background color to the table rows on hover */
+}
+
+#trainingday {
+  background-color: forestgreen;
+  color: white;
+}
+
+#trainingday:hover {
+  background-color: #279f27;
+}

@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"time"
 )
@@ -174,27 +175,9 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	// Render the stats.gohtml template
-	month := time.Now().Month()
-	if r.URL.Query().Get("month") != "" {
-		monthNum, err := strconv.Atoi(r.URL.Query().Get("month"))
-		if err != nil {
-			log.Println("Error converting month to int", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		month = time.Month(monthNum)
-	}
 
-	year := time.Now().Year()
-	if r.URL.Query().Get("year") != "" {
-		year, err = strconv.Atoi(r.URL.Query().Get("year"))
-		if err != nil {
-			log.Println("Error converting year to int", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	}
+	// Render the stats.gohtml template
+	month, year := getMonthYear(r)
 	fmt.Println(month, year)
 
 	tmpl, err := template.New("stats.gohtml").Funcs(template.FuncMap{
@@ -204,7 +187,7 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 		"makeYearSelector": func() []int {
 			var out []int
 			minYear := 2024
-			db.QueryRow("SELECT date_part('year', MIN(date)) FROM attendance WHERE userid = $1" , user.ID).Scan(&minYear)
+			db.QueryRow("SELECT date_part('year', MIN(date)) FROM attendance WHERE userid = $1", user.ID).Scan(&minYear)
 			minYear = minYear - 4
 			for i := minYear; i <= time.Now().Year(); i++ {
 				out = append(out, i)
@@ -264,4 +247,86 @@ func statsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func adminViewHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		http.Error(
+			w,
+			"That method is not allowed.",
+			http.StatusMethodNotAllowed,
+		)
+		return
+	}
+	// Check if the user has a session cookie
+	userID, err := checkAuthenticated(db, r)
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	user, err := getUserFromDB(db, userID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	if !user.Admin {
+		http.Error(w, "You are not an admin", http.StatusForbidden)
+		return
+	}
+	month, year := getMonthYear(r)
+	// Render the stats.gohtml template
+	tmpl, err := template.New("adminView.gohtml").Funcs(template.FuncMap{
+		"currMonth": func() string {
+			return month.String()
+		},
+		"makeYearSelector": func() []int {
+			var out []int
+			minYear := 2024
+			db.QueryRow("SELECT date_part('year', MIN(date)) FROM attendance WHERE userid = $1", user.ID).Scan(&minYear)
+			minYear = minYear - 4
+			for i := minYear; i <= time.Now().Year(); i++ {
+				out = append(out, i)
+			}
+			return out
+		},
+		"currYear": func() int {
+			return year
+		},
+		"monthAverage": func() int {
+			var out string
+			err := db.QueryRow("SELECT DIV(attendances.Total, attendances.Cnt) from (SELECT count(*) as Total, greatest(count(distinct date),1) as Cnt from attendance where date_part('year', date) = $1 and date_part('month', date) = $2) as attendances", year, int(month)).Scan(&out)
+			if err != nil {
+				log.Println("Error scanning database", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return 0
+			}
+			outint, _ := strconv.Atoi(out)
+			return outint
+		},
+		"yearAverage": func() int {
+			var out string
+			err := db.QueryRow("SELECT DIV(attendances.Total, attendances.Cnt) from (SELECT count(*) as Total, greatest(count(distinct date),1) as Cnt from attendance where date_part('year', date) = $1) as attendances", year).Scan(&out)
+			if err != nil {
+				log.Println("Error scanning database", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return 0
+			}
+			outint, _ := strconv.Atoi(out)
+			return outint
+		},
+	}).ParseFiles("templates/adminView.gohtml", "templates/userMenu.gohtml")
+
+	caltpl, err := template.ParseFiles("templates/calendar.gohtml")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.Execute(w, user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	stringFlat := strings.Join(generateCalendar(time.Month(month), year), " ")
+	caltpl.Execute(w, template.HTML(stringFlat))
 }

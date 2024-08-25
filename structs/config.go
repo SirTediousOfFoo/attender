@@ -1,4 +1,4 @@
-// structs/config.go
+// Package structs provides structures for configuration.
 package structs
 
 import (

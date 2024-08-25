@@ -51,6 +51,7 @@ func main() {
 	http.HandleFunc("/{$}", indexHandler)
 	http.HandleFunc("/attend", attendHandler)
 	http.HandleFunc("/stats", statsHandler)
+	http.HandleFunc("/admin", adminViewHandler)
 
 	// Serve up the index page
 	fmt.Println("Server started on http://localhost:8080")
