@@ -1,7 +1,7 @@
 {{- if .Admin -}}
 <div class="topnav" id="myTopnav" >
   <a hx-get="/" hx-target="#main-view">Attend</a>
-  <a hx-get="/admin" hx-target="#main-view">Stats</a>
+  <a hx-get="/stats" hx-target="#main-view">Stats</a>
   <a hx-get="/about" hx-target="#main-view">About</a>
   <a id="adm" hx-get="/admin" hx-target="#main-view"  class="active">Admin</a>
   <div class="dropdown">
@@ -11,8 +11,10 @@
     </div>
   </div>
 </div>
-<h1>Global attendance stats</h1>
-<table style="margin: 0 auto; table-layout: auto; text-align: left; margin-top: 20px;">
+<div class="contentview">
+<div class="admin">
+<h1 >Global attendance stats</h1>
+<table style="table-layout: auto; text-align: left;">
   <thead>
      <tr>
       <th style="padding: 5px;">Yearly attendance for
@@ -45,4 +47,6 @@
     </tr>
   </thead>
 </table>
+</br>
+</br>
 {{ end }}

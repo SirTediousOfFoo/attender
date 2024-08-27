@@ -50,7 +50,7 @@
             </div>
             <input type="text" name="name" placeholder="Name" required="true">
             <input type="text" name="surname" placeholder="Last Name" required="true">
-            <input type="password" name="password" placeholder="Password" required="true" value="">
+            <input type="password" name="password" placeholder="Password" minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*).{8,}$" oninvalid="setCustomValidity('Password has to be at least 8 characters and contain a number, a lower and an upper case character.')" required="true" value="">
             <label id="gdprlabel"for="gdprcheck">
             <input id="gdprcheck" type="checkbox" name="gdpr" required="true" oninvalid="this.setCustomValidity('Yeah, you have to agree to the T&C before you can come in, it\'s a stupid regulation but we have to do it')" oninput="this.setCustomValidity('')"/><span>I agree to the <a href="/termsandconditions">terms and conditions</a></span>
             </label>

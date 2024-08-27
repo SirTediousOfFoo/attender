@@ -270,12 +270,13 @@ func adminViewHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
+	// only admins can view this page
 	if !user.Admin {
 		http.Error(w, "You are not an admin", http.StatusForbidden)
 		return
 	}
 	month, year := getMonthYear(r)
-	// Render the stats.gohtml template
+	// Render the aminview.gohtml template
 	tmpl, err := template.New("adminView.gohtml").Funcs(template.FuncMap{
 		"currMonth": func() string {
 			return month.String()
@@ -284,7 +285,6 @@ func adminViewHandler(w http.ResponseWriter, r *http.Request) {
 			var out []int
 			minYear := 2024
 			db.QueryRow("SELECT date_part('year', MIN(date)) FROM attendance WHERE userid = $1", user.ID).Scan(&minYear)
-			minYear = minYear - 4
 			for i := minYear; i <= time.Now().Year(); i++ {
 				out = append(out, i)
 			}
@@ -317,7 +317,7 @@ func adminViewHandler(w http.ResponseWriter, r *http.Request) {
 		},
 	}).ParseFiles("templates/adminView.gohtml", "templates/userMenu.gohtml")
 
-	caltpl, err := template.ParseFiles("templates/calendar.gohtml")
+	calTpl, err := template.ParseFiles("templates/calendar.gohtml")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -328,5 +328,13 @@ func adminViewHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	stringFlat := strings.Join(generateCalendar(time.Month(month), year), " ")
-	caltpl.Execute(w, template.HTML(stringFlat))
+	calTpl.Execute(w, template.HTML(stringFlat))
+
+	memberList := getMembers(db, time.Date(2024, 6, 1, 0, 0, 0, 0, time.UTC), time.Now())
+	membersTpl, err := template.ParseFiles("templates/memberAttendanceList.gohtml")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	membersTpl.Execute(w, memberList)
 }

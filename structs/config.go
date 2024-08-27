@@ -8,6 +8,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// Database holds the configuration for the database
 type Database struct {
     Host     string `yaml:"host"`
     Port     int    `yaml:"port"`
@@ -16,11 +17,13 @@ type Database struct {
     Name     string `yaml:"database"`
 }
 
+// Config holds the configuration for the application
 type Config struct {
     Database     Database `yaml:"database"`
     PasswordSalt string   `yaml:"passwordSalt"`
 }
 
+// GetConfig reads a configuration file and returns a Config struct
 func GetConfig(filename string) (*Config, error) {
 	buf, err := os.ReadFile(filename)
 	if err != nil {

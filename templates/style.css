@@ -291,3 +291,27 @@ a:active {
 #trainingday:hover {
   background-color: #279f27;
 }
+
+.admin{
+  margin: 20px 20px;
+  float: left;
+  clear: both;
+  position: relative;
+}
+
+.admin h1 {
+  text-align: left;
+  color: #333;
+}
+
+.memberslist {
+  margin: 0 20px;
+  float: right;
+  position: relative;
+}
+
+.contentview {
+  width: 50%;
+  position: relative;
+  margin: 0 auto;
+}
