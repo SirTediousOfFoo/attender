@@ -16,6 +16,9 @@
       <a href="/">Attend</a>
       <a href="#stats">Stats</a>
       <a href="#about">About</a>
+      {{ if .Admin }}
+      <a id="adm" hx-get="/admin" hx-target="#main-view">Admin</a>
+      {{ end }}
       <div class="dropdown">
         <a class="dropbtn" id="user" href="#user"><i class="bx bxs-user dropdown"></i></a>
         <div class="dropdown-content">
@@ -47,9 +50,12 @@
             </div>
             <input type="text" name="name" placeholder="Name" required="true">
             <input type="text" name="surname" placeholder="Last Name" required="true">
-            <input type="password" name="password" placeholder="Password" required="true" value="">
+            <input type="password" name="password" placeholder="Password" minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*).{8,}$" oninvalid="setCustomValidity('Password has to be at least 8 characters and contain a number, a lower and an upper case character.')" required="true" value="">
+            <label id="tnc"for="tnccheck">
+            <input id="tnccheck" type="checkbox" name="tnc" required="true" oninvalid="this.setCustomValidity('Yeah, you have to agree to the T&C before you can come in, it\'s a stupid regulation but we have to do it')" oninput="this.setCustomValidity('')"/><span>I agree to the <a href="/termsandconditions">terms and conditions</a></span>
+            </label>
             <label id="gdprlabel"for="gdprcheck">
-            <input id="gdprcheck" type="checkbox" name="gdpr" required="true" oninvalid="this.setCustomValidity('Yeah, you have to agree to the T&C before you can come in, it\'s a stupid regulation but we have to do it')" oninput="this.setCustomValidity('')"/><span>I agree to the <a href="/termsandconditions">terms and conditions</a></span>
+            <input id="gdprcheck" type="checkbox" name="gdpr" required="true" oninvalid="this.setCustomValidity('Yeah, you have to agree to the GDPR stuff before you can come in, it\'s a stupid regulation but we have to do it')" oninput="this.setCustomValidity('')"/><span>I consent <a href="/gdpr">to the usage of my data</a></span>
             </label>
             <button type="submit" hx-trigegr="click[valid]" hx-swap="none">Sign up</button>
           </form>

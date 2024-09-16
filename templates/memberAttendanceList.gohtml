@@ -1,0 +1,21 @@
+<div class="memberslist">
+  <h2>Member attendance list</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Member</th>
+        <th>Attendance</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ range . }}
+      <tr>
+        <td>{{ .Name }} {{ .Surname }}</td>
+        {{ range .Dates }}
+        <td>{{ .Format "02. 01. 2006." }}</td>
+        {{ end }}
+      </tr>
+      {{ end }}
+    </tbody>
+  </table>
+</div>

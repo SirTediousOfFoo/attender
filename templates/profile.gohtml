@@ -1,0 +1,27 @@
+<div id="main-view">
+<div class="topnav" id="myTopnav" >
+  <a hx-get="/" hx-target="#main-view">Attend</a>
+  <a hx-get="/stats" hx-target="#main-view">Stats</a>
+  <a hx-get="/about" hx-target="#main-view">About</a>
+  {{ if .Admin }}
+  <a id="adm" hx-get="/admin" hx-target="#main-view">Admin</a>
+  {{ end }}
+  <div class="dropdown active">
+    <a class="dropbtn" id="user" href="#user"><i class="bx bxs-user dropdown"></i></a>
+    <div class="dropdown-content">
+      {{ template "userMenu.gohtml" . }}
+    </div>
+  </div>
+</div>
+<h1>Your profile</h1>
+<div id="about">
+<p> Hi, {{ .Name }}! </p>
+<p> Your email address is: {{ .Email }} </p>
+<p> Your username is: {{ .Username }} </p>
+<p> Thaht's basically all we know about you. </p>
+<p> Other than that this place is pretty boring. </p>
+<p> Didn't get around to implementing a functionality here yet... </p>
+<p> But hey, you can always log out and log back in! </p>
+<p> Wanna log out? Huh? <strong>Huh?</strong> <br> Well just <a href="/logout"> click here!</a></p>
+</div>
+</div>

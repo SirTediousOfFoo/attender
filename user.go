@@ -9,32 +9,15 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"sirtediousoffoo/attender/structs"
 	"time"
 
 	_ "github.com/lib/pq"
 )
 
-// User holds data for our current user
-type User struct {
-	ID            int
-	Name          string
-	Surname       string
-	Username      string
-	Email         string
-	Authenticated bool
-	Stats         Stats
-}
-
-// Stats holds attendance data for our current user, probably will be nil for most cases except for the stats page
-type Stats struct {
-	AttendedTotal   int
-	AttendedMonthly int
-	AttendedYearly  int
-}
-
-func getUserFromDB(db *sql.DB, id int) (User, error) {
-	var user User
-	err := db.QueryRow("SELECT id, name, surname, username, email FROM users WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Surname, &user.Username, &user.Email)
+func getUserFromDB(db *sql.DB, id int) (structs.User, error) {
+	var user structs.User
+	err := db.QueryRow("SELECT id, name, surname, username, email, admin FROM users WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Surname, &user.Username, &user.Email, &user.Admin)
 	if err != nil {
 		user.Authenticated = false
 		return user, err
@@ -43,9 +26,9 @@ func getUserFromDB(db *sql.DB, id int) (User, error) {
 	return user, nil
 }
 
-func authenticateUser(db *sql.DB, username, password string) (User, error) {
+func authenticateUser(db *sql.DB, username, password string) (structs.User, error) {
 
-	var user User
+	var user structs.User
 	// Hash the password
 	password = password + cfg.PasswordSalt
 	password = hex.EncodeToString(sha512.New512_256().Sum([]byte(password))[:])
@@ -53,7 +36,7 @@ func authenticateUser(db *sql.DB, username, password string) (User, error) {
 
 	if err != nil {
 		log.Println(err, password)
-		return User{Username: username, Authenticated: false}, err
+		return structs.User{Username: username, Authenticated: false}, err
 	}
 
 	user.Authenticated = true
@@ -115,7 +98,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if r.FormValue("name") == "" || r.FormValue("surname") == "" || r.FormValue("username") == "" || r.FormValue("email") == "" || r.FormValue("password") == "" || r.FormValue("gdpr") != "on" {
+		if r.FormValue("name") == "" || r.FormValue("surname") == "" || r.FormValue("username") == "" || r.FormValue("email") == "" || r.FormValue("password") == "" || r.FormValue("gdpr") != "on" || r.FormValue("tnc") != "on" {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
