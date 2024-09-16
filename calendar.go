@@ -31,9 +31,9 @@ func generateCalendar(month time.Month, year int) []string {
 		}
 		var dayEntry string
 		if dayAttend != 0 {
-			dayEntry = "<td id='trainingday'>" + strconv.Itoa(i) + "<div style='position:relative;left:50%'>" + strconv.Itoa(dayAttend) + "</div></td>\n"
+			dayEntry = "<td id='trainingday'>" + strconv.Itoa(i) + "<div style='position:relative;left:50%;color:black;'>" + strconv.Itoa(dayAttend) + "</div></td>\n"
 		} else {
-			dayEntry = "<td>" + strconv.Itoa(i) + "<div style='position:relative;left:50%'></div></td>\n"
+			dayEntry = "<td>" + strconv.Itoa(i) + "<div style='position:relative;left:50%;color:black;'></div></td>\n"
 		}
 		calendar = append(calendar, dayEntry)
 

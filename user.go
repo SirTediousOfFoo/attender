@@ -98,7 +98,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if r.FormValue("name") == "" || r.FormValue("surname") == "" || r.FormValue("username") == "" || r.FormValue("email") == "" || r.FormValue("password") == "" || r.FormValue("gdpr") != "on" {
+		if r.FormValue("name") == "" || r.FormValue("surname") == "" || r.FormValue("username") == "" || r.FormValue("email") == "" || r.FormValue("password") == "" || r.FormValue("gdpr") != "on" || r.FormValue("tnc") != "on" {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}

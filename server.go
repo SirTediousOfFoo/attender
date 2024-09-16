@@ -67,7 +67,7 @@ func loginPageHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := checkAuthenticated(db, r)
 	if err == nil && id != 0 {
 		// Redirect to the index page
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, r.Host, http.StatusSeeOther)
 		return
 	}
 
@@ -337,4 +337,76 @@ func adminViewHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	membersTpl.Execute(w, memberList)
+}
+
+func gdprHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "templates/gdpr.html")
+}
+
+func aboutHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		http.Error(
+			w,
+			"That method is not allowed.",
+			http.StatusMethodNotAllowed,
+		)
+		return
+	}
+	// Check if the user has a session cookie
+	userID, err := checkAuthenticated(db, r)
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	user, err := getUserFromDB(db, userID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	// Render the about.gohtml template
+	tmpl, err := template.ParseFiles("templates/about.gohtml", "templates/userMenu.gohtml")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.Execute(w, user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func profileHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		http.Error(
+			w,
+			"That method is not allowed.",
+			http.StatusMethodNotAllowed,
+		)
+		return
+	}
+	// Check if the user has a session cookie
+	userID, err := checkAuthenticated(db, r)
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	user, err := getUserFromDB(db, userID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	// Render the profile.gohtml template
+	tmpl, err := template.ParseFiles("templates/profile.gohtml", "templates/userMenu.gohtml")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.Execute(w, user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

@@ -141,7 +141,7 @@ a:active {
 .loginbox {
   margin: 0 auto;
   width: 350px;
-  height: 570px;
+  height: 600px;
   background: gray;
   overflow: hidden;
   background: linear-gradient(#888, #eee);
@@ -220,7 +220,7 @@ a:active {
 }
 
 .loginbox #chk:checked ~ .signup {
-  transform: translateY(-570px);
+  transform: translateY(-600px);
 }
 .loginbox #chk:checked ~ .signup .signuplabel {
   transform: scale(1);
@@ -241,15 +241,36 @@ a:active {
   height: 23px;
 }
 
+.loginbox .signup #tnc {
+  justify-content: left;
+  display: flex;
+  cursor: pointer;
+}
+
+.loginbox #tnc {
+  width: 80%;
+  margin: auto auto;
+  height: 23px;
+}
+
 .loginbox #gdprcheck {
   width: auto;
   margin-top: 7px;
+  margin-left: 7px;
+  margin-right: 7px;
 }
-
+.loginbox #tnccheck {
+  width: auto;
+  margin-top: 7px;
+  margin-left: 7px;
+  margin-right: 7px;
+}
 .loginbox #gdprlabel span {
   align-content: center;
 }
-
+.loginbox #tnc span {
+  align-content: center;
+}
 
 .calendar {
   margin: 0 auto;
@@ -284,7 +305,7 @@ a:active {
 }
 
 #trainingday {
-  background-color: forestgreen;
+  background: linear-gradient(140deg, forestgreen 50%, #fff0 50%);
   color: white;
 }
 
@@ -314,4 +335,26 @@ a:active {
   width: 50%;
   position: relative;
   margin: 0 auto;
+}
+
+@media (max-width: 1900px) {
+  .contentview {
+    width: 75%;
+  }
+}
+@media (max-width: 1300px) {
+  .memberslist {
+    float: left;
+  }
+}
+
+#about {
+  margin: 0 auto;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+}
+#about p {
+  text-align: left;
+  color: black;
 }

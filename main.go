@@ -45,6 +45,7 @@ func main() {
 	http.HandleFunc("/logmein", loginHandler)
 	http.HandleFunc("/logout", logoutHandler)
 	http.HandleFunc("/termsandconditions", termsAndConditionsHandler)
+	http.HandleFunc("/gdpr", gdprHandler)
 	http.HandleFunc("/signmeup", signupHandler)
 	http.HandleFunc("/validate/email", emailValidator)
 	http.HandleFunc("/validate/username", usernameValidator)
@@ -52,7 +53,9 @@ func main() {
 	http.HandleFunc("/attend", attendHandler)
 	http.HandleFunc("/stats", statsHandler)
 	http.HandleFunc("/admin", adminViewHandler)
-
+	http.HandleFunc("/about", aboutHandler)
+	http.HandleFunc("/profile", profileHandler)
+	
 	// Serve up the index page
 	fmt.Println("Server started on http://localhost:8080")
 	http.ListenAndServe(":8080", nil)

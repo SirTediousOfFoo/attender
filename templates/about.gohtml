@@ -1,0 +1,24 @@
+<div id="main-view">
+<div class="topnav" id="myTopnav" >
+  <a hx-get="/" hx-target="#main-view">Attend</a>
+  <a hx-get="/stats" hx-target="#main-view">Stats</a>
+  <a hx-get="/about" hx-target="#main-view"class="active">About</a>
+  {{ if .Admin }}
+  <a id="adm" hx-get="/admin" hx-target="#main-view">Admin</a>
+  {{ end }}
+  <div class="dropdown">
+    <a class="dropbtn" id="user" href="#user"><i class="bx bxs-user dropdown"></i></a>
+    <div class="dropdown-content">
+      {{ template "userMenu.gohtml" . }}
+    </div>
+  </div>
+</div>
+<h1>About this app</h1>
+<div id="about">
+<p>This is a simple attendance tracking app. It is built with Go and HTMX to be as light as possible. It should be fast to run on a potato and simple to use.</p>
+<p>The webmaster is Petar Ivanković Milošević. You can contact me on Discord or Facebook or whatever.</p>
+<p>It is open source and you can find the code on <a href="https://github.com/SirTediousOfFoo/attender">GitHub</a>.</p>
+<p>I'm hosting this at home on a mini PC in a cupboard. There's a database in the back holding all your data, I protect it with my life. Nothing is directly exposed to the internet and I'm not collecting any data on you. I don't even know who you are.</p>
+<p>The dream is for this to become a central hub for all our Ars stuff but for now we just have this.</p>
+</div>
+</div>
