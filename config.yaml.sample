@@ -5,3 +5,5 @@ database:
   user: your_db_username
   password: your_db_password
 passwordSalt: your_password_salt
+host: localhost
+port: 8080
