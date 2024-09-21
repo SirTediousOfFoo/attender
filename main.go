@@ -55,8 +55,9 @@ func main() {
 	http.HandleFunc("/admin", adminViewHandler)
 	http.HandleFunc("/about", aboutHandler)
 	http.HandleFunc("/profile", profileHandler)
-	
+
 	// Serve up the index page
-	fmt.Println("Server started on http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
+	connString := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+	log.Println("Server started on http://" + connString)
+	http.ListenAndServe(connString, nil)
 }

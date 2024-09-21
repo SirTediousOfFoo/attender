@@ -21,6 +21,8 @@ type Database struct {
 type Config struct {
     Database     Database `yaml:"database"`
     PasswordSalt string   `yaml:"passwordSalt"`
+		Host				 string   `yaml:"host"`
+		Port				 int      `yaml:"port"`
 }
 
 // GetConfig reads a configuration file and returns a Config struct

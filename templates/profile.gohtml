@@ -6,8 +6,8 @@
   {{ if .Admin }}
   <a id="adm" hx-get="/admin" hx-target="#main-view">Admin</a>
   {{ end }}
-  <div class="dropdown active">
-    <a class="dropbtn" id="user" href="#user"><i class="bx bxs-user dropdown"></i></a>
+  <div class="dropdown">
+    <a class="dropbtn active" id="user"><i class="bx bxs-user dropdown"></i></a>
     <div class="dropdown-content">
       {{ template "userMenu.gohtml" . }}
     </div>
